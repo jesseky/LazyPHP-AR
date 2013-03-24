@@ -199,7 +199,13 @@ class Searcher
         return $this->table;
     }
 
-    public function filterBy($exp, $value, $op = '=')
+
+    /**
+     * $book = Book::search()->by('author.name', '曹雪芹');
+     * 不支持 OR
+     * 不支持 IN/BETWEEN
+     */
+    public function by($field, $value, $op = '=')
     {
         // 使得用户可以传一个object进来
         // is_object() 判断不可少，不然SAE上会把String也认为Ojbect
@@ -207,26 +213,23 @@ class Searcher
             $value = $value->id;
 
         $relationMap = $this->relationMap();
-        $tableDotKey = preg_match('/\b(\w+)\.(\w+)\b/', $exp, $matches); // table.key = ?
-        $tableDotId = isset($relationMap[$exp]);
+        $tableDotKey = preg_match('/\b(\w+)\.(\w+)\b/', $field, $matches); // table.key = ?
+        $tableDotId = isset($relationMap[$field]);
 
         if ($tableDotKey) {
             $ref = $matches[1];
             $refKey = $matches[2];
             $refTable = $relationMap[$ref];
-            $this->conds["$refTable.$refKey=?"] = $value;
-            $this->conds["$this->table.$ref=$refTable.id"] = null;
+            $this->conds[] = "$refTable.$refKey".$op.s($value);
+            $this->conds[] = "$this->table.$ref=$refTable.id"]; // join on
         } else {
-            if (strpos($exp, '?') === false && $value !== null) {
-                $exp = "$this->table.$exp=?";
-            }
-            $this->conds[$exp] = $value;
+            $this->conds[] = $field.$op.s($value);
         }
             
         return $this;
     }
 
-    public function orderBy($exp)
+    public function sort($exp)
     {
         $this->orders[] = "$this->table.$exp";
         return $this;
@@ -248,12 +251,15 @@ class Searcher
         return $this;
     }
 
+    /**
+     * 这个函数没有用啊，删掉啊
+     */
     public function join(Searcher $s)
     {
         $st = $s->table();
         $rMap = array_flip($s->relationMap());
         $refKey = $rMap[$this->table];
-        $this->conds[$st . ".$refKey=$this->table.id"] = null;
+        $this->conds[] = "$st.$refKey=$this->table.id";
         $this->conds += $s->conds;
 
         if (!in_array($st, $this->tables))
@@ -275,27 +281,32 @@ class Searcher
         $limitStr = $this->limit ? "LIMIT $this->limit" : '';
         $tail = "$limitStr OFFSET $this->offset";
         if ($this->conds) {
-            $condStr = implode(' AND ', array_keys($this->conds));
-            $a = array_filter(array_values($this->conds));
-            $values = array();
-            foreach ($a as $v) {
-                if (is_array($v)) {
-                    $values += $v;
-                } else {
-                    $values[] = $v;
-                }
-            }
-            $conds = array($condStr => $values);
+            $condStr = implode(' AND ', $this->conds);
         } else {
-            $conds = '';
+            $condStr = '';
         }
-        $ids = Sdb::fetch($field, $this->tables, $conds, $this->orders, $tail);
+        $sql = $field.$this->tables.$condStr.$this->orders.$tail;
+        $ids = get_data($sql);
 
-        $class = $this->class;
-        $ret = array_map(function ($id) use($class) {
-            return new $class($id);
-        }, $ids);
+        $ret = array();
+        foreach ($ids as $id) {
+            $ret[] = new $this->class($id);
+        }
         return $ret;
+    }
+
+    public function count()
+    {
+        $sql = $this->buildSql();
+        $field = "COUNT($this->table.id)";
+        if ($this->distinct)
+            $field = "COUNT(DISTINCT($field))";
+        if ($this->conds) {
+            $condStr = implode(' AND ', $this->conds);
+        } else {
+            $condStr = '';
+        }
+        return  get_var($field.$this->tables.$condStr);
     }
 
     // ------------ private section -----------------
