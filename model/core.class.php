@@ -64,10 +64,10 @@ class CoreModel
         return $this->info();
     }
 
-    protected function info() // will this bug?
+    private function info()
     {
         $self = get_called_class();
-        $sql = 'SELECT * FROM '.self::table().' WHERE id='.s($this->id).'LIMIT 1';
+        $sql = 'SELECT * FROM '.self::table().' WHERE id='.s($this->id).' LIMIT 1';
         $ret = get_line($sql);
         if (empty($ret))
             throw new Exception(get_called_class() . " no id: $this->id");
@@ -76,16 +76,16 @@ class CoreModel
 
     public function exists()
     {
-        return false !== get_var('SELECT id FROM'.self::table().' WHERE id='.s($this->id).'LIMIT 1');
+        return false !== get_var('SELECT id FROM'.self::table().' WHERE id='.s($this->id).' LIMIT 1');
     }
 
     public static function table()
     {
-        $self = get_called_class();
-        if (isset($self::$table))
-            return $self::$table;
-        else 
-            return self::camelCaseToUnderscore($self);
+        if (isset(static::$table)) {
+            return static::$table;
+        } else {
+            return self::camelCaseToUnderscore(get_called_class());
+        }
     }
 
     public function update($a, $value = null)
@@ -301,8 +301,8 @@ class Searcher
         $ids = get_data($sql);
 
         $ret = array();
-        foreach ($ids as $id) {
-            $ret[] = new $this->class($id);
+        foreach ($ids as $a) {
+            $ret[] = new $this->class($a['id']);
         }
         return $ret;
     }
@@ -332,4 +332,3 @@ class Searcher
         return $this->relationMap = $class::relationMap();
     }
 }
-
