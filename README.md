@@ -118,8 +118,8 @@ class Book extends CoreModel {
 ```php
 class Book extends CoreModel {
     public static $relationMap = array(
-        'foreign_table' => 'foreign_key',
-        'author' => 'author_id',
+        'foreign_key' => 'foreign_table',
+        'author_id' => 'author',
         //'publisher' => 'publisher', // 如名字相同，则不需要
     );
 }

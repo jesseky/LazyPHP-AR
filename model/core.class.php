@@ -238,7 +238,7 @@ class Searcher
         if (is_object($value) && is_a($value, 'CoreModel'))
             $value = $value->id;
 
-        $relationMap = $this->relationMap();
+        $relationMap = array_flip($this->relationMap());
         $tableDotKey = preg_match('/\b(\w+)\.(\w+)\b/', $field, $matches); // table.key
 
         if ($tableDotKey) {
