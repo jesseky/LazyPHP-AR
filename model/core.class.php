@@ -294,7 +294,7 @@ class Searcher
         return $this;
     }
 
-    public function find()
+    public function find($limit = null, $offset = null)
     {
         if ($this->distinct) {
             $field = "DISTINCT(`$this->table`.id)";
@@ -309,6 +309,12 @@ class Searcher
             $where = '';
         }
         $orderByStr = $this->orders ? 'ORDER BY '.implode(',', $this->orders) : '';
+        if ($limit !== null) {
+            $this->limit = $limit;
+        }
+        if ($offset !== null) {
+            $this->offset = $offset;
+        }
         $limitStr = $this->limit ? "LIMIT $this->limit" : '';
         $tail = "$limitStr OFFSET $this->offset";
         $sql = "SELECT $field FROM $tableStr $where $orderByStr $tail";

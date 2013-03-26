@@ -98,19 +98,20 @@ title('find(foreign.key1=value1 and foreign.key2=value2)');
 $searcher = Book::search()
     ->by('author.nationality', 'UK')
     ->by('author.gender', 'female');
-$books = $searcher->limit(2)->find();
+$books = $searcher->limit(2)->offset(1)->find();
 foreach ($books as $book) {
     echo "$book->name by $book->author_nationality $book->author_gender writers<br>\n";
 }
 
-title('find');
-$count = $searcher->count();
-echo "actually, there are $count book written by UK female writers";
-
-function echo_last_sql()
-{
-    echo g('LP_LAST_SQL'), "<br>\n";
+title('pager');
+$books = $searcher->find(1, 1);
+foreach ($books as $book) {
+    echo "$book->name by $book->author_nationality $book->author_gender writers<br>\n";
 }
+
+title('count()');
+$count = $searcher->count();
+echo "there are $count book written by UK female writers";
 
 function title($str)
 {
