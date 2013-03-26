@@ -61,7 +61,6 @@ class CoreModel
             $keyArr[] = "`$key`";
         }
         $sql = 'INSERT INTO `'.self::table().'` ('.implode(',', $keyArr).') VALUES ('.implode(',', $valueArr).')';
-        echo "$sql<br>";
         run_sql($sql);
         if (db_errno()) {
             throw new Exception("error when insert: ".db_error(), 1);
@@ -112,19 +111,20 @@ class CoreModel
     {
         $sql = 'UPDATE `'.self::table().'` SET ';
         if($value !== null) { // given by key => value
-            $sql .= "$a=".s($value);
+            $sql .= "`$a`='".s($value)."'";
         } else {
             foreach ($a as $key => $value) {
-                $sql .= (strpos($key, '=') === false) ? "$key=?" : $key;
+                $sql .= (strpos($key, '=') === false) ? "`$key`=?" : $key;
                 if ($value !== null) {
-                    $sql .= s($value);
+                    $sql .= "'".s($value)."'";
                 }
             }
         }
         $sql .= ' WHERE `id`='.s($this->id);
+        echo "$sql<br>";
         run_sql($sql);
         if (db_errno()) {
-            throw new Exception("update error: ".$db_error(), 1);
+            throw new Exception("update error: ".db_error(), 1);
         }
         $self = get_called_class();
         $this->info = $this->info(); // refresh data
