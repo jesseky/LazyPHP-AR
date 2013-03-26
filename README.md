@@ -20,10 +20,11 @@ PHP 5.3.3 测试通过，不保证别的版本。
 简明教程
 ---------
 
-请将 `model` 中的 `core.class.php` 文件放在 LazyPHP 的 `core/model` 目录中，
-将controller中的core.class.php文件放在lp的core/controller目录中，替换
+请将 `model` 目录下的 `core.class.php` 文件放在 LazyPHP 的 `_lp/core/model` 目录中。
+将 `controller` 目录下的 `core.class.php` 文件放在 LazyPHP 的 `_lp/core/controller` 目录中，替换掉同名文件。
 
-Active Record 意味着数据库中的一行数据对应一个对象
+Active Record 意味着数据库中的一行数据对应一个对象，而一个表，就对应着一个类。
+
 首先要针对每个表建立相应的类。然后就可以使用非常人性化的方法获取对象的属性了。
 
 new 一个对象，就相当于从表中取了一行数据。
@@ -36,7 +37,7 @@ echo $book->name;
 echo $book->author()->name;
 ```
 
-从表中查找对象，即获取多个表格行的方法如下：
+查找对象，即获取多个表格行的方法如下：
 
 ```php
 $books = Book::search()->by('author.name', '曹雪芹')->find();
