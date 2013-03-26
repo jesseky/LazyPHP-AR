@@ -86,7 +86,7 @@ class CoreModel
     private function info()
     {
         $self = get_called_class();
-        $sql = 'SELECT * FROM `'.self::table().'` WHERE `id`='.s($this->id).' LIMIT 1';
+        $sql = 'SELECT * FROM `'.self::table()."` WHERE `id`='".s($this->id)."' LIMIT 1";
         $ret = get_line($sql);
         if (empty($ret))
             throw new Exception(get_called_class() . " no id: $this->id");
@@ -95,7 +95,7 @@ class CoreModel
 
     public function exists()
     {
-        return false !== get_var('SELECT id FROM `'.self::table().'` WHERE `id`='.s($this->id).' LIMIT 1');
+        return false !== get_var('SELECT id FROM `'.self::table()."` WHERE `id`='".s($this->id)."' LIMIT 1");
     }
 
     public static function table()
@@ -121,7 +121,7 @@ class CoreModel
                 }
             }
         }
-        $sql = 'UPDATE `'.self::table().'` SET '.implode(',', $exprArr).' WHERE `id`='.s($this->id);
+        $sql = 'UPDATE `'.self::table().'` SET '.implode(',', $exprArr)." WHERE `id`='".s($this->id)."' LIMIT 1";
         run_sql($sql);
         if (db_errno()) {
             throw new Exception("update error: ".db_error(), 1);
@@ -177,7 +177,7 @@ class CoreModel
 
     public function del()
     {
-        $sql = 'DELETE FROM `'.self::table().'` WHERE `id`='.s($this->id);
+        $sql = 'DELETE FROM `'.self::table()."` WHERE `id`='".s($this->id)."' LIMIT 1";
         run_sql($sql);
         if (db_errno()) {
             throw new Exception("delete error: ".db_error(), 1);
