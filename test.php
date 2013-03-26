@@ -36,11 +36,11 @@ class Book extends CoreModel {
         return parent::create($info);
     }
 
-    public function visite()
+    public function visit()
     {
         $this->update(array(
             'hit=hit+1',
-            'read=NOW()'
+            'visited=NOW()'
         ));
     }
 }
@@ -61,7 +61,7 @@ $newBook = Book::create(array(
 
 $newBook->update('name', '红楼梦 前八十回');
 
-// $newBook->visit();
+$newBook->visit();
 
 // $books = Book::search()->by('author.name', 'J. K. Rowling')->find();
 // echo_last_sql();

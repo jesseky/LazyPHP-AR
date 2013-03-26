@@ -109,19 +109,19 @@ class CoreModel
 
     public function update($a, $value = null)
     {
-        $sql = 'UPDATE `'.self::table().'` SET ';
+        $exprArr = array();
         if($value !== null) { // given by key => value
-            $sql .= "`$a`='".s($value)."'";
-        } else {
+            $exprArr[] = "`$a`='".s($value)."'";
+        } elseif (is_array($a)) {
             foreach ($a as $key => $value) {
-                $sql .= (strpos($key, '=') === false) ? "`$key`=?" : $key;
-                if ($value !== null) {
-                    $sql .= "'".s($value)."'";
+                if (is_numeric($key)) {
+                    $exprArr[] = $value;
+                } elseif ($value !== null) {
+                    $exprArr[] = "`$key`='".s($value)."'";
                 }
             }
         }
-        $sql .= ' WHERE `id`='.s($this->id);
-        echo "$sql<br>";
+        $sql = 'UPDATE `'.self::table().'` SET '.implode(',', $exprArr).' WHERE `id`='.s($this->id);
         run_sql($sql);
         if (db_errno()) {
             throw new Exception("update error: ".db_error(), 1);
