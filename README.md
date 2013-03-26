@@ -160,7 +160,7 @@ $book->name = 'new name'; // 即刻访问数据库，生效
 // 更新多列
 $book->update(array(
     'name' => 'another new name',
-    'click=click+1', // 这里也可以试用表达式
+    'click=click+1', // 这里也可以使用表达式
 ));
 ```
 
