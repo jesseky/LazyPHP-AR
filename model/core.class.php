@@ -300,7 +300,7 @@ class Searcher
             $field = "DISTINCT(`$this->table`.id)";
         } else {
             $this->fields[] = "`$this->table`.*";
-            $field = implode(',', $this->fields);
+            $field = implode(',', array_unique($this->fields));
         }
         $tableStr = '`'.implode('`,`', array_unique($this->tables)).'`';
         if ($this->conds) {
@@ -313,7 +313,6 @@ class Searcher
         $tail = "$limitStr OFFSET $this->offset";
         $sql = "SELECT $field FROM $tableStr $where $orderByStr $tail";
         $results = get_data($sql);
-        // var_dump($results);
 
         $ret = array();
         foreach ($results as $a) {
