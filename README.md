@@ -173,8 +173,12 @@ $book->delete();
 $searcher = Book::search()
     ->by('author.nationality', 'UK')
     ->by('author.gender', 'female')
-    ->by('(author.id=\''.s($year1).'\' OR author.born_year=\''.s($year2))."'"); // 支持直接传字符串作为复杂表达式，但需要自己过滤
+    ->by('publish_year', 1999, '>') // 支持不同的运算符
 $count = $searcher->count();
 $books = $searcher->limit(20)->offset(100)->find();
+$books = $searcher->find(20, 100); // 和上一行语句的作用一样
+
+// 支持直接传字符串作为复杂表达式，但需要自己过滤
+Book::search()->by('(author.id=\''.s($year1).'\' OR author.born_year=\''.s($year2))."'")->find();
 ```
 
