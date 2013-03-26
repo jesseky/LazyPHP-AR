@@ -6,7 +6,15 @@
  * 
  * https://github.com/picasso250/ORM4LazyPHP
  * 
- * 这是一个为 LazyPHP 打造的
+ * 这是一个专门为 LazyPHP 打造的 Active Record 类
+ * Active Record 意味着数据库中的一行数据对应一个对象
+ * 
+ * 使用方式：
+ * $book = new Book($book_id);
+ * echo $book->name;
+ * echo $book->author()->name;
+ * $books = Book::search()->by('author.name', '曹雪芹')->find();
+ * 
  * @author picasso250
  */
 
@@ -16,6 +24,8 @@ class CoreModel
     protected $info = null;
     
     // new an object from id or array
+    // 新建一个 Object
+    // 接受的参数是一个id
     public function __construct($a)
     {
         if (is_array($a) && isset($a['id'])) { // new from array
@@ -32,6 +42,7 @@ class CoreModel
 
     public static function create($info = array())
     {
+        // 这里主要是为了解决 created=NOW()的问题
         // given by array('key=?' => 'value', 'key' => 'value',...)
         $keyArr = array();
         $valueArr = array();
@@ -146,7 +157,7 @@ class CoreModel
         if (empty($this->info)) {
             $this->info = $this->info();
         }
-        $prop = camel2under($name);
+        $prop = self::camelCaseToUnderscore($name);
         if (isset($this->info[$prop])) {
             $class = ucfirst($name);
             return new $class($this->info[$prop]);
