@@ -57,12 +57,17 @@ $newAuthor = Author::create(array(
 $newBook = Book::create(array(
     'name' => '红楼梦',
     'author' => $newAuthor,
+    'language' => 'zh',
 ));
 
 $newBook->update('name', '红楼梦 前八十回');
 
 $newBook->visit();
 
+$books = Book::search()->by('language', 'en')->find();
+foreach ($books as $book) {
+    echo "$book->name is write in en<br>\n";
+}
 // $books = Book::search()->by('author.name', 'J. K. Rowling')->find();
 // echo_last_sql();
 // foreach ($books as $book) {

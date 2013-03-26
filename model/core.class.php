@@ -224,11 +224,10 @@ class Searcher
         $this->tables[] = $this->table;
     }
 
-    public function table()
+    public function table() // ?
     {
         return $this->table;
     }
-
 
     /**
      * $book = Book::search()->by('author.name', '曹雪芹');
@@ -250,10 +249,10 @@ class Searcher
             $ref = $matches[1];
             $refKey = $matches[2];
             $refTable = $relationMap[$ref];
-            $this->conds[] = "$refTable.$refKey".$op.s($value);
+            $this->conds[] = "`$refTable`.`$refKey` ".$op." '".s($value)."'";
             $this->conds[] = "$this->table.$ref=$refTable.id"; // join on
         } else {
-            $this->conds[] = $field.$op.s($value);
+            $this->conds[] = "`$field` $op '".s($value)."'";
         }
             
         return $this;
@@ -305,10 +304,10 @@ class Searcher
 
     public function find()
     {
-        $field = "$this->table.id";
+        $field = "`$this->table`.id";
         if ($this->distinct)
             $field = "DISTINCT($field)";
-        $tableStr = implode(',', $this->tables);
+        $tableStr = '`'.implode('`,`', $this->tables).'`';
         if ($this->conds) {
             $where = 'WHERE '.implode(' AND ', $this->conds);
         } else {
