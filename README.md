@@ -5,14 +5,14 @@ LazyPHP-AR
 
 需要 LazyPHP 的 db 函数库才能运行。
 
-PHP 5.3.3 测试通过，不保证别的版本。
+PHP 5.3.3 测试通过，不保证别的版本。如有需要，请提 Issue。
 
 在 [BSD 协议](http://en.wikipedia.org/wiki/BSD_licenses) 下发布。
 
 特性
 -----
 
-- 如遵守默认的命名规则，几乎不需要配置。
+- 如遵循默认的命名规则，几乎不需要配置。
 - 支持联表查询。
 - 自动过滤所有的参数，防止 SQL 注入。
 - 支持方法链。
@@ -28,9 +28,11 @@ PHP 5.3.3 测试通过，不保证别的版本。
 
 Active Record 意味着数据库中的一行数据对应一个对象，而一个表，就对应着一个类。
 
-首先要针对每个表建立相应的类。然后就可以使用非常人性化的方法获取对象的属性了。
+首先要针对每个表建立相应的类。
 
 new 一个对象，就相当于从表中取了一行数据。
+
+然后就可以通过获取对象的属性来获取表中的数据了。
 
 ```php
 class Book extends CoreModel {}
@@ -43,7 +45,10 @@ echo $book->author()->name;
 查找对象，即获取多个表格行的方法如下：
 
 ```php
-$books = Book::search()->by('author.name', '曹雪芹')->find();
+$books = Book::search()
+    ->('publish_year', 2000, '>') // 本世纪出版的书
+    ->by('author.name', '莫言')   // 作者是莫言，注意，这里已经使用了联表查询
+    ->find();
 ```
 
 创建一个对象，相当于在表中添加一行。
@@ -62,13 +67,7 @@ $newBook = Book::create(array(
 $newBook->name = 'Harry Potter and the Goblet of Fire';
 ```
 
-也可以使用不同的运算符获取对象。
-
-```php
-$books = Book::search()->by('name', "%$keyword%", 'like')->find();
-```
-
-或者使用联表查询，再或者将条件联合起来查询，这一切都是自动的。
+将条件联合起来查询，或者联表查询，这一切都是自动的。
 
 分页使用 limit 和 offset 方法。
 
@@ -79,3 +78,15 @@ $searcher = Book::search()
 $count = $searcher->count();
 $books = $searcher->limit(20)->offset(100)->find();
 ```
+
+理念
+-----
+
+一个优秀的库懂得适可而止。做一个大而全的东西是很有吸引力的，但是我不做。
+
+我欣赏 LazyPHP 的懒人智慧。要知道，一个网站，有80%的时间在运行那20%的代码，我就只为你们写那20%的代码。
+
+这个库不支持 OR 条件，不支持外连接，不支持 group by，不支持很多很多，
+如果你觉得某项需求确实很常见，请提 Issue（但我不保证实现），或者自己写 SQL 语句。
+
+面对现实吧，我们做的网站真的很简单，超过 10 行的 SQL 语句，只存在于传说之中。
