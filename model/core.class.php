@@ -40,19 +40,28 @@ class CoreModel
         }
     }
 
+    // $info 的形式 array('expression', 'key' => 'value',...)
     public static function create($info = array())
     {
-        // 这里主要是为了解决 created=NOW()的问题
-        // given by array('key=?' => 'value', 'key' => 'value',...)
+        // 这里主要是为了解决 created=NOW() 的问题
         $keyArr = array();
         $valueArr = array();
         foreach ($info as $key => $value) {
-            $keyArr[] = (strpos($key, '=') === false) ? "$key=?s" : $key;
-            if ($value !== null) {
-                $valueArr[] = s($value);
+            if (is_object($value) && is_a($value, 'CoreModel')) {
+                $value = $value->id;
             }
+            if (is_numeric($key)) {
+                $t = explode('=', $value);
+                $key = $t[0];
+                $value = $t[1];
+                $valueArr[] = $value;
+            } else {
+                $valueArr[] = "'".s($value)."'";
+            }
+            $keyArr[] = "`$key`";
         }
         $sql = 'INSERT INTO `'.self::table().'` ('.implode(',', $keyArr).') VALUES ('.implode(',', $valueArr).')';
+        echo "$sql<br>";
         run_sql($sql);
         if (db_errno()) {
             throw new Exception("error when insert: ".db_error(), 1);
