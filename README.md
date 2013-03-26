@@ -20,8 +20,8 @@ PHP 5.3.3 测试通过，不保证别的版本。
 安装
 -------
 
-请将 `model` 目录下的 `core.class.php` 文件放在 LazyPHP 的 `_lp/core/model` 目录中。
-将 `controller` 目录下的 `core.class.php` 文件放在 LazyPHP 的 `_lp/core/controller` 目录中，替换掉同名文件。
+1. 将 `model` 目录下的 `core.class.php` 文件放在 LazyPHP 的 `_lp/core/model` 目录中。
+2. 将 `controller` 目录下的 `core.class.php` 文件放在 LazyPHP 的 `_lp/core/controller` 目录中，替换掉同名文件。
 
 简明教程
 ---------

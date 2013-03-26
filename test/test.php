@@ -1,9 +1,14 @@
 <?php
 
+/**
+ * 测试方法：首先在数据库中建立一个名字为 lazyartest 的数据库，
+ * 然后通过浏览器访问这个文件就可以了。
+ */
+
 if(!defined('DS')) define('DS', DIRECTORY_SEPARATOR);
 
 define('AROOT', dirname(__FILE__).DS);
-define('CROOT', AROOT);
+define('CROOT', AROOT.'..'.DS);
 
 error_reporting(E_ALL);
 ini_set('display_errors' , true);
