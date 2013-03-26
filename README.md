@@ -109,7 +109,7 @@ class Book extends CoreModel {
 }
 ```
 
-所有数据库的主键都是 id。
+所有数据库的主键都是 id。不可以配置。
 
 **外键配置**
 
@@ -128,4 +128,53 @@ class Book extends CoreModel {
 如果键名和对应的表名是相同的，如第三行的 `publisher`，则不需要在 `$relationMap` 中配置。
 这样更方便，推荐采用这种命名方式。
 
+**获取一行数据**
+
+```php
+$book = new Book($id);
+echo $book->name;
+echo $book->get('name');
+
+$arr = $book->toArray(); // 转换成数组
+
+// 不需要自己写 author() 方法，只要定义了 Author 类即可。
+// 这个 $author 对象有 Author 类的所有方法
+$author = $book->author(); 
+```
+
+**创建一行数据**
+```php
+$newBook = Book::create(array(
+    'name' => 'Harry Potter and sorry, forget',
+    'author' => $author, // 此处可以使用对象赋值，将自动转换成它的 id
+    'language' => 'en',
+    'created=NOW()',     // 可以直接写表达式
+));
+```
+
+**更新数据**
+
+```php
+$book->name = 'new name'; // 即刻访问数据库，生效
+
+// 更新多列
+$book->update(array(
+    'name' => 'another new name',
+    'click=click+1', // 这里也可以试用表达式
+));
+```
+
+**删除数据**
+$book->delete();
+
+**查询**
+
+```php
+$searcher = Book::search()
+    ->by('author.nationality', 'UK')
+    ->by('author.gender', 'female')
+    ->by('(author.id=\''.s($year1).'\' OR author.born_year=\''.s($year2))."'"); // 支持直接传字符串作为复杂表达式，但需要自己过滤
+$count = $searcher->count();
+$books = $searcher->limit(20)->offset(100)->find();
+```
 

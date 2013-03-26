@@ -84,6 +84,12 @@ foreach ($books as $book) {
     echo "$book->name is about $keyword<br>\n";
 }
 
+title('find(expr)');
+$books = Book::search()->by('author.id=1 OR author.id=2')->find();
+foreach ($books as $book) {
+    echo "$book->name by whoever<br>\n";
+}
+
 title('find(foreign.key=value)');
 $books = Book::search()->by('author.name', 'J. K. Rowling')->find();
 foreach ($books as $book) {

@@ -170,7 +170,7 @@ class CoreModel
         }
     }
 
-    public function del()
+    public function delete()
     {
         $sql = 'DELETE FROM `'.self::table()."` WHERE `id`='".s($this->id)."' LIMIT 1";
         run_sql($sql);
@@ -252,7 +252,12 @@ class Searcher
                 $foreignKey = $relationMap[$refTable];
             }
 
-            $this->conds[] = "`$refTable`.`$refKey` ".$op." '".s($value)."'";
+            if ($value !== null) {
+                $cond = "`$refTable`.`$refKey` $op '".s($value)."'";
+            } else {
+                $cond = "($field)";
+            }
+            $this->conds[] = $cond;
             $this->conds[] = "`$this->table`.`$foreignKey`=`$refTable`.id"; // join on
             $this->tables[] = $refTable;
             $this->fields[] = "`$refTable`.`$refKey` AS {$refTable}_{$refKey}"; // 既然找到了，就搞上去
