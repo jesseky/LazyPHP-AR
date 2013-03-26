@@ -1,7 +1,7 @@
 LazyPHP-AR
 ===========
 
-这是一个专门为 [LazyPHP](https://github.com/easychen/LazyPHP) 打造的，轻量级的 Active Record 实现。
+LazyPHP-AR 一个专门为 [LazyPHP](https://github.com/easychen/LazyPHP) 打造的，轻量级的 Active Record 实现。
 
 需要 LazyPHP 的 db 函数库才能运行。
 
@@ -120,7 +120,7 @@ class Book extends CoreModel {
     public static $relationMap = array(
         'foreign_key' => 'foreign_table',
         'author_id' => 'author',
-        //'publisher' => 'publisher', // 如名字相同，则不需要
+        //'publisher' => 'publisher', // 如名字相同，则不需要配置
     );
 }
 ```
