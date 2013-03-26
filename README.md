@@ -88,5 +88,44 @@ $books = $searcher->limit(20)->offset(100)->find();
 
 这个库不支持 OR 条件，不支持外连接，不支持 group by，不支持很多很多，
 如果你觉得某项需求确实很常见，请提 Issue（但我不保证实现），或者自己写 SQL 语句。
-
 面对现实吧，我们做的网站真的很简单，超过 10 行的 SQL 语句，只存在于传说之中。
+
+当然，你也可以继承 CoreModel 类，写出自己的更复杂的 AR，如缓存，数据校验等。
+
+文档
+-----
+
+**命名规则**
+
+数据库使用下划线命名，而类使用骆驼式命名，类的文件名是类名加 `.class.php`。
+如类名为 `VeryImportantPerson`，则表名应为 `very_important_person`，而文件名为 `VeryImportantPerson.class.php`。
+一个类要单独写在一个文件里。
+
+一个类的表名也可以单独配置。
+
+```php
+class Book extends CoreModel {
+    public static $table = 'shu_biao';
+}
+```
+
+所有数据库的主键都是 id。
+
+**外键配置**
+
+外键配置在类的公共静态变量 `$relationMap` 里。键名是列名，键值是表名。
+
+```php
+class Book extends CoreModel {
+    public static $relationMap = array(
+        'foreign_table' => 'foreign_key',
+        'author' => 'author_id',
+        //'publisher' => 'publisher', // 如名字相同，则不需要
+    );
+}
+```
+
+如果键名和对应的表名是相同的，如第三行的 `publisher`，则不需要在 `$relationMap` 中配置。
+这样更方便，推荐采用这种命名方式。
+
+

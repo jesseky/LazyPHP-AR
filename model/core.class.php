@@ -70,14 +70,6 @@ class CoreModel
         return new $self(last_id());
     }
 
-    // will we need that?
-    protected static function notNull($info)
-    {
-        return array_filter(array_values($info), function ($e) {
-            return ($e !== null && $e !== false);
-        });
-    }
-
     public function toArray()
     {
         if ($this->info) {
@@ -247,15 +239,21 @@ class Searcher
             $value = $value->id;
 
         $relationMap = $this->relationMap();
-        $tableDotKey = preg_match('/\b(\w+)\.(\w+)\b/', $field, $matches); // table.key = ?
-        $tableDotId = isset($relationMap[$field]);
+        $tableDotKey = preg_match('/\b(\w+)\.(\w+)\b/', $field, $matches); // table.key
 
         if ($tableDotKey) {
-            $ref = $matches[1];
+            $refTable = $matches[1];
             $refKey = $matches[2];
-            $refTable = $relationMap[$ref];
+
+            // 默认的外键和外表同名
+            // 但如果有特意配置，就另当别论了
+            $foreignKey = $refTable;
+            if (isset($relationMap[$refTable])) {
+                $foreignKey = $relationMap[$refTable];
+            }
+
             $this->conds[] = "`$refTable`.`$refKey` ".$op." '".s($value)."'";
-            $this->conds[] = "`$this->table`.`$ref`=`$refTable`.id"; // join on
+            $this->conds[] = "`$this->table`.`$foreignKey`=`$refTable`.id"; // join on
             $this->tables[] = $refTable;
             $this->fields[] = "`$refTable`.`$refKey` AS {$refTable}_{$refKey}"; // 既然找到了，就搞上去
             $this->fields[] = "`$refTable`.id AS {$refTable}_id";

@@ -31,10 +31,6 @@ foreach ($init_sqls as $sql) {
 }
 
 class Book extends CoreModel {
-    public static $relationMap = array(
-        'author' => 'author',
-    );
-
     public static function create($info)
     {
         $info[] = 'created=NOW()';
