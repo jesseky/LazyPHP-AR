@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- 主机: localhost
--- 生成日期: 2013 年 03 月 26 日 06:29
+-- 生成日期: 2013 年 03 月 26 日 07:02
 -- 服务器版本: 5.5.8
 -- PHP 版本: 5.3.5
 
@@ -23,6 +23,8 @@ DROP TABLE IF EXISTS `author`;
 CREATE TABLE IF NOT EXISTS `author` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `gender` enum('male','female') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `nationality` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT=4 ;
 
@@ -30,9 +32,9 @@ CREATE TABLE IF NOT EXISTS `author` (
 -- 转存表中的数据 `author`
 --
 
-INSERT INTO `author` (`id`, `name`) VALUES
-(1, 'J. K. Rowling'),
-(3, 'Ernest Hemingway');
+INSERT INTO `author` (`id`, `name`, `gender`, `nationality`) VALUES
+(1, 'J. K. Rowling', 'female', 'UK'),
+(3, 'Ernest Hemingway', 'male', 'US');
 
 -- --------------------------------------------------------
 

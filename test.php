@@ -46,35 +46,68 @@ class Book extends CoreModel {
 }
 class Author extends CoreModel {}
 
+echo '<meta charset="UTF-8" />', "\n";
+
+title('__get()');
 $book = new Book(1);
 echo "$book->name<br>\n";
-echo $book->author()->name, "<br>\n";
 
-$newAuthor = Author::create(array(
-    'name' => '曹雪芹',
-));
+title('__call()');
+$author = $book->author();
+echo $author->name, "<br>\n";
 
+title('create()');
 $newBook = Book::create(array(
-    'name' => '红楼梦',
-    'author' => $newAuthor,
-    'language' => 'zh',
+    'name' => 'Harry Potter and sorry, forget',
+    'author' => $author,
+    'language' => 'en',
 ));
+echo "$newBook->name<br>";
 
-$newBook->update('name', '红楼梦 前八十回');
-
+title('update()');
+$newBook->update('name', 'Harry Potter and the Goblet of Fire');
 $newBook->visit();
+echo "$newBook->name<br>";
 
-$books = Book::search()->by('language', 'en')->find();
+title('find(key=value)');
+$lang = 'en';
+$books = Book::search()->by('language', $lang)->find();
 foreach ($books as $book) {
-    echo "$book->name is write in en<br>\n";
+    echo "$book->name is write in $lang<br>\n";
 }
-// $books = Book::search()->by('author.name', 'J. K. Rowling')->find();
-// echo_last_sql();
-// foreach ($books as $book) {
-//     echo "$book->name by J. K. Rowling<br>\n";
-// }
+
+title('find(key like value)');
+$keyword = 'harry';
+$books = Book::search()->by('name', "%$keyword%", 'like')->find();
+foreach ($books as $book) {
+    echo "$book->name is about $keyword<br>\n";
+}
+
+title('find(foreign.key=value)');
+$books = Book::search()->by('author.name', 'J. K. Rowling')->find();
+foreach ($books as $book) {
+    echo "$book->name by J. K. Rowling<br>\n";
+}
+
+title('find(foreign.key1=value1 and foreign.key2=value2)');
+$searcher = Book::search()
+    ->by('author.nationality', 'UK')
+    ->by('author.gender', 'female');
+$books = $searcher->limit(2)->find();
+foreach ($books as $book) {
+    echo "$book->name by UK female writers<br>\n";
+}
+
+title('find');
+$count = $searcher->count();
+echo "actually, there are $count book written by UK female writers";
 
 function echo_last_sql()
 {
     echo g('LP_LAST_SQL'), "<br>\n";
+}
+
+function title($str)
+{
+    echo "<h3>$str</h3>\n";
 }

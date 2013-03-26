@@ -233,8 +233,9 @@ class Searcher
      * $book = Book::search()->by('author.name', '曹雪芹');
      * 不支持 OR
      * 不支持 IN/BETWEEN
+     * 如果只传一个字符串，那么将会把这个字符串直接当作表达式来用！
      */
-    public function by($field, $value, $op = '=')
+    public function by($field, $value = null, $op = '=')
     {
         // 使得用户可以传一个object进来
         // is_object() 判断不可少，不然SAE上会把String也认为Ojbect
@@ -250,7 +251,8 @@ class Searcher
             $refKey = $matches[2];
             $refTable = $relationMap[$ref];
             $this->conds[] = "`$refTable`.`$refKey` ".$op." '".s($value)."'";
-            $this->conds[] = "$this->table.$ref=$refTable.id"; // join on
+            $this->conds[] = "`$this->table`.`$ref`=`$refTable`.id"; // join on
+            $this->tables[] = $refTable;
         } else {
             $this->conds[] = "`$field` $op '".s($value)."'";
         }
@@ -307,9 +309,9 @@ class Searcher
         $field = "`$this->table`.id";
         if ($this->distinct)
             $field = "DISTINCT($field)";
-        $tableStr = '`'.implode('`,`', $this->tables).'`';
+        $tableStr = '`'.implode('`,`', array_unique($this->tables)).'`';
         if ($this->conds) {
-            $where = 'WHERE '.implode(' AND ', $this->conds);
+            $where = 'WHERE '.implode(' AND ', array_unique($this->conds));
         } else {
             $where = '';
         }
@@ -317,7 +319,6 @@ class Searcher
         $limitStr = $this->limit ? "LIMIT $this->limit" : '';
         $tail = "$limitStr OFFSET $this->offset";
         $sql = "SELECT $field FROM $tableStr $where $orderByStr $tail";
-        echo "$sql<br>";
         $ids = get_data($sql);
 
         $ret = array();
@@ -332,9 +333,9 @@ class Searcher
         $field = "$this->table.id";
         if ($this->distinct)
             $field = "DISTINCT($field)";
-        $tableStr = implode(',', $this->tables);
+        $tableStr = implode(',', array_unique($this->tables));
         if ($this->conds) {
-            $where = 'WHERE '.implode(' AND ', $this->conds);
+            $where = 'WHERE '.implode(' AND ', array_unique($this->conds));
         } else {
             $where = '';
         }
