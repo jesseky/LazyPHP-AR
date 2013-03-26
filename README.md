@@ -1,7 +1,7 @@
 LazyPHP-AR
 ===========
 
-这是一个专门为 LazyPHP 打造的，轻量级的 Active Record 实现。
+这是一个专门为 [LazyPHP](https://github.com/easychen/LazyPHP) 打造的，轻量级的 Active Record 实现。
 
 需要 LazyPHP 的 db 函数库才能运行。
 
@@ -17,11 +17,14 @@ PHP 5.3.3 测试通过，不保证别的版本。
 - 自动过滤所有的参数，防止 SQL 注入。
 - 支持方法链。
 
-简明教程
----------
+安装
+-------
 
 请将 `model` 目录下的 `core.class.php` 文件放在 LazyPHP 的 `_lp/core/model` 目录中。
 将 `controller` 目录下的 `core.class.php` 文件放在 LazyPHP 的 `_lp/core/controller` 目录中，替换掉同名文件。
+
+简明教程
+---------
 
 Active Record 意味着数据库中的一行数据对应一个对象，而一个表，就对应着一个类。
 
