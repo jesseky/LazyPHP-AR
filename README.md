@@ -165,6 +165,7 @@ $book->update(array(
 ```
 
 **删除数据**
+
 $book->delete();
 
 **查询**
