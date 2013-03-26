@@ -52,7 +52,7 @@ class CoreModel
                 $valueArr[] = s($value);
             }
         }
-        $sql = 'INSERT INTO '.self::table().' ('.implode(',', $keyArr).') VALUES ('.implode(',', $valueArr).')';
+        $sql = 'INSERT INTO `'.self::table().'` ('.implode(',', $keyArr).') VALUES ('.implode(',', $valueArr).')';
         run_sql($sql);
         if (db_errno()) {
             throw new Exception("error when insert: ".db_error(), 1);
@@ -78,7 +78,7 @@ class CoreModel
     private function info()
     {
         $self = get_called_class();
-        $sql = 'SELECT * FROM '.self::table().' WHERE id='.s($this->id).' LIMIT 1';
+        $sql = 'SELECT * FROM `'.self::table().'` WHERE `id`='.s($this->id).' LIMIT 1';
         $ret = get_line($sql);
         if (empty($ret))
             throw new Exception(get_called_class() . " no id: $this->id");
@@ -87,7 +87,7 @@ class CoreModel
 
     public function exists()
     {
-        return false !== get_var('SELECT id FROM'.self::table().' WHERE id='.s($this->id).' LIMIT 1');
+        return false !== get_var('SELECT id FROM `'.self::table().'` WHERE `id`='.s($this->id).' LIMIT 1');
     }
 
     public static function table()
@@ -101,7 +101,7 @@ class CoreModel
 
     public function update($a, $value = null)
     {
-        $sql = 'UPDATE '.self::table().' SET ';
+        $sql = 'UPDATE `'.self::table().'` SET ';
         if($value !== null) { // given by key => value
             $sql .= "$a=".s($value);
         } else {
@@ -112,7 +112,7 @@ class CoreModel
                 }
             }
         }
-        $sql .= ' WHERE id='.s($this->id);
+        $sql .= ' WHERE `id`='.s($this->id);
         run_sql($sql);
         if (db_errno()) {
             throw new Exception("update error: ".$db_error(), 1);
@@ -168,7 +168,7 @@ class CoreModel
 
     public function del()
     {
-        $sql = 'DELETE FROM '.self::table().' WHERE id='.s($this->id);
+        $sql = 'DELETE FROM `'.self::table().'` WHERE `id`='.s($this->id);
         run_sql($sql);
         if (db_errno()) {
             throw new Exception("delete error: ".db_error(), 1);
@@ -309,6 +309,7 @@ class Searcher
         $limitStr = $this->limit ? "LIMIT $this->limit" : '';
         $tail = "$limitStr OFFSET $this->offset";
         $sql = "SELECT $field FROM $tableStr $where $orderByStr $tail";
+        echo "$sql<br>";
         $ids = get_data($sql);
 
         $ret = array();
