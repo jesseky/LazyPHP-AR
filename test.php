@@ -95,7 +95,7 @@ $searcher = Book::search()
     ->by('author.gender', 'female');
 $books = $searcher->limit(2)->find();
 foreach ($books as $book) {
-    echo "$book->name by UK female writers<br>\n";
+    echo "$book->name by $book->author_nationality $book->author_gender writers<br>\n";
 }
 
 title('find');

@@ -80,6 +80,9 @@ class CoreModel
 
     public function toArray()
     {
+        if ($this->info) {
+            return $this->info;
+        }
         return $this->info();
     }
 
@@ -208,13 +211,14 @@ class CoreModel
 
 class Searcher
 {
-    private $table = null;
-    private $class = null;
-    private $tables = array();
-    private $conds = array();
-    private $orders = array();
-    private $limit = 1000;
-    private $offset = 0;
+    private $table    = null;
+    private $class    = null;
+    private $fields   = array();
+    private $tables   = array();
+    private $conds    = array();
+    private $orders   = array();
+    private $limit    = 1000;
+    private $offset   = 0;
     private $distinct = false;
     
     public function __construct($class)
@@ -253,6 +257,8 @@ class Searcher
             $this->conds[] = "`$refTable`.`$refKey` ".$op." '".s($value)."'";
             $this->conds[] = "`$this->table`.`$ref`=`$refTable`.id"; // join on
             $this->tables[] = $refTable;
+            $this->fields[] = "`$refTable`.`$refKey` AS {$refTable}_{$refKey}"; // 既然找到了，就搞上去
+            $this->fields[] = "`$refTable`.id AS {$refTable}_id";
         } else {
             $this->conds[] = "`$field` $op '".s($value)."'";
         }
@@ -282,22 +288,6 @@ class Searcher
         return $this;
     }
 
-    /**
-     * 这个函数没有用啊，删掉啊
-     */
-    public function join(Searcher $s)
-    {
-        $st = $s->table();
-        $rMap = array_flip($s->relationMap());
-        $refKey = $rMap[$this->table];
-        $this->conds[] = "$st.$refKey=$this->table.id";
-        $this->conds += $s->conds;
-
-        if (!in_array($st, $this->tables))
-            $this->tables[] = $st;
-        return $this;
-    }
-
     public function distinct()
     {
         $this->distinct = true;
@@ -306,9 +296,12 @@ class Searcher
 
     public function find()
     {
-        $field = "`$this->table`.id";
-        if ($this->distinct)
-            $field = "DISTINCT($field)";
+        if ($this->distinct) {
+            $field = "DISTINCT(`$this->table`.id)";
+        } else {
+            $this->fields[] = "`$this->table`.*";
+            $field = implode(',', $this->fields);
+        }
         $tableStr = '`'.implode('`,`', array_unique($this->tables)).'`';
         if ($this->conds) {
             $where = 'WHERE '.implode(' AND ', array_unique($this->conds));
@@ -319,18 +312,22 @@ class Searcher
         $limitStr = $this->limit ? "LIMIT $this->limit" : '';
         $tail = "$limitStr OFFSET $this->offset";
         $sql = "SELECT $field FROM $tableStr $where $orderByStr $tail";
-        $ids = get_data($sql);
+        $results = get_data($sql);
+        // var_dump($results);
 
         $ret = array();
-        foreach ($ids as $a) {
-            $ret[] = new $this->class($a['id']);
+        foreach ($results as $a) {
+            if (count($a) === 1) {
+                $a = $a['id'];
+            }
+            $ret[] = new $this->class($a);
         }
         return $ret;
     }
 
     public function count()
     {
-        $field = "$this->table.id";
+        $field = "`$this->table`.id";
         if ($this->distinct)
             $field = "DISTINCT($field)";
         $tableStr = implode(',', array_unique($this->tables));
