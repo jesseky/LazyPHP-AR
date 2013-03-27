@@ -5,6 +5,8 @@ LazyPHP-AR 一个专门为 [LazyPHP](https://github.com/easychen/LazyPHP) 打造
 
 需要 LazyPHP 的 db 函数库才能运行。
 
+以前我们通常会花大量的时间来编写 SQL 语句来执行一些通用的 CURD 的操作，这不仅浪费时间，而且不利于代码的维护。LazyPHP-AR 就是为了解决这个问题。
+
 PHP 5.3.3 测试通过，不保证别的版本。如有需要，请提 Issue。
 
 在 [BSD 协议](http://en.wikipedia.org/wiki/BSD_licenses) 下发布。
