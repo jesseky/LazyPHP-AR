@@ -184,6 +184,6 @@ $books = $searcher->limit(20)->offset(100)->find();
 $books = $searcher->find(20, 100); // 和上一行语句的作用一样
 
 // 支持直接传字符串作为复杂表达式，但需要自己过滤
-Book::search()->by('(author.id=\''.s($year1).'\' OR author.born_year=\''.s($year2))."'")->find();
+Book::search()->by("author.id='".s($id1)."' OR author.id='".s($id2)."'")->find();
 ```
 
