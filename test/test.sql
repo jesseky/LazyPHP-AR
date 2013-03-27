@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- 主机: localhost
--- 生成日期: 2013 年 03 月 26 日 07:02
+-- 生成日期: 2013 年 03 月 27 日 01:04
 -- 服务器版本: 5.5.8
 -- PHP 版本: 5.3.5
 
@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `author` (
 
 INSERT INTO `author` (`id`, `name`, `gender`, `nationality`) VALUES
 (1, 'J. K. Rowling', 'female', 'UK'),
-(3, 'Ernest Hemingway', 'male', 'US');
+(2, 'Ernest Hemingway', 'male', 'US');
 
 -- --------------------------------------------------------
 
@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS `book` (
   `name` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
   `author` int(10) unsigned NOT NULL COMMENT '作者id',
   `language` enum('en','zh') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `publisher` int(10) unsigned NOT NULL COMMENT '出版商，对应的表为company',
   `hit` int(10) unsigned NOT NULL DEFAULT '0' COMMENT '阅读次数',
   `created` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '创建时间',
   `visited` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '最后阅读时间',
@@ -58,8 +59,29 @@ CREATE TABLE IF NOT EXISTS `book` (
 -- 转存表中的数据 `book`
 --
 
-INSERT INTO `book` (`id`, `name`, `author`, `language`, `hit`, `created`, `visited`) VALUES
-(1, 'Harry Potter and the Philosopher''s Stone', 1, 'en', 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(2, 'Harry Potter and the Chamber of Secrets', 1, 'en', 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(3, 'Harry Potter and the Prisoner of Azkaban', 1, 'en', 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
-(5, 'The Old man and the Sea', 2, 'en', 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00');
+INSERT INTO `book` (`id`, `name`, `author`, `language`, `publisher`, `hit`, `created`, `visited`) VALUES
+(1, 'Harry Potter and the Philosopher''s Stone', 1, 'en', 2, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(2, 'Harry Potter and the Chamber of Secrets', 1, 'en', 2, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(3, 'Harry Potter and the Prisoner of Azkaban', 1, 'en', 2, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00'),
+(5, 'The Old man and the Sea', 2, 'en', 1, 0, '0000-00-00 00:00:00', '0000-00-00 00:00:00');
+
+-- --------------------------------------------------------
+
+--
+-- 表的结构 `company`
+--
+
+DROP TABLE IF EXISTS `company`;
+CREATE TABLE IF NOT EXISTS `company` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci AUTO_INCREMENT=3 ;
+
+--
+-- 转存表中的数据 `company`
+--
+
+INSERT INTO `company` (`id`, `name`) VALUES
+(1, '清华大学出版社'),
+(2, '三联出版社');
