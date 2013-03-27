@@ -233,8 +233,7 @@ class Searcher
 
     /**
      * $book = Book::search()->by('author.name', '曹雪芹');
-     * 不支持 OR
-     * 不支持 IN/BETWEEN
+     * 操作符不支持 IN/BETWEEN
      * 如果只传一个字符串，那么将会把这个字符串直接当作表达式来用！
      */
     public function by($field, $value = null, $op = '=')
@@ -245,7 +244,11 @@ class Searcher
             $value = $value->id;
 
         $relationMap = $this->relationMap();
-        $tableDotKey = preg_match('/\b(\w+)\.(\w+)\b/', $field, $matches); // table.key
+
+        // table.key
+        // 如果是 t1.key1 OR t2.key1 该如何处理？
+        // 如果是 `t`.`key`该如何处理？这个用正则就可以了吧
+        $tableDotKey = preg_match('/\b(\w+)\.(\w+)\b/', $field, $matches); 
 
         if ($tableDotKey) {
             $refTable = $matches[1];
