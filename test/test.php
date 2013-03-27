@@ -53,8 +53,25 @@ class Author extends CoreModel {}
 echo '<meta charset="UTF-8" />', "\n";
 
 title('__get()');
-$book = new Book(1);
+$bookId = 1;
+$book = new Book($bookId);
 echo "$book->name<br>\n";
+
+title('exists()');
+$anotherId = 99;
+$anotherBook = new Book($anotherId);
+echo "Book with id $bookId ";
+if ($book->exists()) {
+    echo "exists<br>\n";
+} else {
+    echo "does NOT exist<br>\n";
+}
+echo "Book with id $anotherId ";
+if ($anotherBook->exists()) {
+    echo "exists<br>\n";
+} else {
+    echo "does NOT exist<br>\n";
+}
 
 title('__call()');
 $author = $book->author();
