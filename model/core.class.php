@@ -80,7 +80,6 @@ class CoreModel
 
     private function info()
     {
-        $self = get_called_class();
         $sql = 'SELECT * FROM `'.self::table()."` WHERE `id`='".s($this->id)."' LIMIT 1";
         $ret = get_line($sql);
         if (empty($ret))
@@ -90,7 +89,14 @@ class CoreModel
 
     public function exists()
     {
-        return false !== get_var('SELECT id FROM `'.self::table()."` WHERE `id`='".s($this->id)."' LIMIT 1");
+        $sql = 'SELECT * FROM `'.self::table()."` WHERE `id`='".s($this->id)."' LIMIT 1";
+        $ret = get_line($sql);
+        if (empty($ret)) {
+            return false;
+        } else {
+            $this->info = $ret;
+            return true;
+        }
     }
 
     public static function table()
