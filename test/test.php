@@ -13,10 +13,10 @@ define('CROOT', AROOT.'..'.DS);
 error_reporting(E_ALL);
 ini_set('display_errors' , true);
 
-require_once CROOT.'lib'.DS.'core.function.php';
 require_once CROOT.'lib'.DS.'db.function.php';
 require_once CROOT.'model'.DS.'core.class.php';
 
+// 创建测试表
 $init_sqls = explode(';', file_get_contents('test.sql'));
 foreach ($init_sqls as $sql) {
     $sql = trim($sql);
@@ -31,6 +31,9 @@ foreach ($init_sqls as $sql) {
 }
 
 class Book extends CoreModel {
+    public static $relationMap = array(
+        'publisher' => 'company',
+    );
     public static function create($info)
     {
         $info[] = 'created=NOW()';
@@ -99,7 +102,8 @@ foreach ($books as $book) {
 title('find(foreign.key1=value1 and foreign.key2=value2)');
 $searcher = Book::search()
     ->by('author.nationality', 'UK')
-    ->by('author.gender', 'female');
+    ->by('author.gender', 'female')
+    ->by('publisher.name', '三联出版社');
 $books = $searcher->limit(2)->offset(1)->find();
 foreach ($books as $book) {
     echo "$book->name by $book->author_nationality $book->author_gender writers<br>\n";

@@ -238,18 +238,17 @@ class Searcher
         if (is_object($value) && is_a($value, 'CoreModel'))
             $value = $value->id;
 
-        $relationMap = array_flip($this->relationMap());
+        $relationMap = $this->relationMap();
         $tableDotKey = preg_match('/\b(\w+)\.(\w+)\b/', $field, $matches); // table.key
 
         if ($tableDotKey) {
             $refTable = $matches[1];
             $refKey = $matches[2];
-
-            // 默认的外键和外表同名
-            // 但如果有特意配置，就另当别论了
             $foreignKey = $refTable;
+
+            // 如果有特意配置，就可以用外键名当作表名查询
             if (isset($relationMap[$refTable])) {
-                $foreignKey = $relationMap[$refTable];
+                $refTable = $relationMap[$refTable];
             }
 
             if ($value !== null) {
@@ -321,7 +320,7 @@ class Searcher
         $limitStr = $this->limit ? "LIMIT $this->limit" : '';
         $tail = "$limitStr OFFSET $this->offset";
         $sql = "SELECT $field FROM $tableStr $where $orderByStr $tail";
-        $results = get_data($sql);
+        $results = get_data($sql) ?: array();
 
         $ret = array();
         foreach ($results as $a) {
