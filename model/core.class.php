@@ -247,8 +247,7 @@ class Searcher
 
         // table.key
         // 如果是 t1.key1 OR t2.key1 该如何处理？
-        // 如果是 `t`.`key`该如何处理？这个用正则就可以了吧
-        $tableDotKey = preg_match('/\b(\w+)\.(\w+)\b/', $field, $matches); 
+        $tableDotKey = preg_match('/\b`?(\w+)`?\.`?(\w+)`?\b/', $field, $matches); 
 
         if ($tableDotKey) {
             $refTable = $matches[1];

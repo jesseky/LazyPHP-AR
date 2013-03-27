@@ -119,8 +119,8 @@ foreach ($books as $book) {
 title('find(foreign.key1=value1 and foreign.key2=value2)');
 $searcher = Book::search()
     ->by('author.nationality', 'UK')
-    ->by('author.gender', 'female')
-    ->by('publisher.name', '三联出版社');
+    ->by('`author`.`gender`', 'female')
+    ->by('`publisher`.name', '三联出版社');
 $books = $searcher->limit(2)->offset(1)->find();
 foreach ($books as $book) {
     echo "$book->name by $book->author_nationality $book->author_gender writers<br>\n";
@@ -134,7 +134,7 @@ foreach ($books as $book) {
 
 title('count()');
 $count = $searcher->count();
-echo "there are $count book written by UK female writers";
+echo "there are total $count books";
 
 function title($str)
 {
