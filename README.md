@@ -82,7 +82,7 @@ $books = $searcher->limit(20)->offset(100)->find();
 理念
 -----
 
-一个优秀的库懂得适可而止。做一个大而全的东西是很有吸引力的，但是我不做。
+一个优秀的库懂得适可而止。对于一个程序员来说，做一个大而全的东西是很有吸引力的，但是我不接受那个诱惑。
 
 我欣赏 LazyPHP 的懒人智慧。要知道，一个网站，有80%的时间在运行那20%的代码，我就只为你们写那20%的代码。
 
@@ -105,7 +105,7 @@ $books = $searcher->limit(20)->offset(100)->find();
 
 ```php
 class Book extends CoreModel {
-    public static $table = 'shu_biao';
+    public static $table = 'shu_biao'; // 这里我偏要使用汉语拼音做表名
 }
 ```
 
@@ -131,8 +131,8 @@ class Book extends CoreModel {
 **获取一行数据**
 
 ```php
-$book = new Book($id);
-echo $book->name;
+$book = new Book($id); // 此时不去检测数据是否存在
+echo $book->name;      // 直到获取数据时才开始 SQL 查询
 echo $book->get('name');
 
 $arr = $book->toArray(); // 转换成数组
@@ -140,6 +140,8 @@ $arr = $book->toArray(); // 转换成数组
 // 不需要自己写 author() 方法，只要定义了 Author 类即可。
 // 这个 $author 对象有 Author 类的所有方法
 $author = $book->author(); 
+
+$author->exists()       // 判断数据是否存在
 ```
 
 **创建一行数据**
@@ -160,13 +162,15 @@ $book->name = 'new name'; // 即刻访问数据库，生效
 // 更新多列
 $book->update(array(
     'name' => 'another new name',
-    'click=click+1', // 这里也可以使用表达式
+    'click=click+1',     // 也可以使用表达式哦
 ));
 ```
 
 **删除数据**
 
+```php
 $book->delete();
+```
 
 **查询**
 
